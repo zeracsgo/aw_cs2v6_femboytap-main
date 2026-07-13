@@ -1,4 +1,4 @@
-local BASE        = "https://raw.githubusercontent.com/MudillaScripts/aw_cs2v6_femboytap/main/"
+local BASE = "https://raw.githubusercontent.com/zeracsgo/aw_cs2v6_femboytap-main/main/"
 local GUILIB_URL  = BASE .. "femboytap_guilib.lua"
 local CHANGER_URL = BASE .. "femboytap_changer.lua"
 
