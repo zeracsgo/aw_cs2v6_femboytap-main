@@ -4,8 +4,8 @@ M.VERSION = "1.0"
 local T = {
     x = 360, y = 200, w = 600, h = 440,
 
-    accent    = { 139, 124, 246 },
-    accent_bg = { 40, 36, 64, 255 },
+    accent    = { 144, 238, 144 },
+    accent_bg = { 144, 238, 144 },
     bg        = { 20, 20, 26, 255 },
     bg2       = { 15, 15, 20, 255 },
     section   = { 25, 25, 32, 255 },
@@ -31,7 +31,7 @@ local T = {
     notif_w      = 290,
     notif_margin = 18,
     notif_life   = 3.5,
-    notif_info    = { 139, 124, 246 },
+    notif_info    = { 144, 238, 144 },
     notif_success = { 80, 200, 120 },
     notif_error   = { 235, 90, 90 },
 }
@@ -82,65 +82,8 @@ end
 
 local ffi = ffi
 local FONT_URLS = {
-    { file = "femboytap_Oxanium.ttf",      url = "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/oxanium/Oxanium%5Bwght%5D.ttf" },
-    { file = "femboytap_Orbitron.ttf",     url = "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/orbitron/Orbitron%5Bwght%5D.ttf" },
-    { file = "femboytap_SpaceGrotesk.ttf", url = "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/spacegrotesk/SpaceGrotesk%5Bwght%5D.ttf" },
-}
-
-local FONT, FONT_B, FONT_LOGO
-local function initFonts()
-    local mk = function(list, size, weight)
-        for _, name in ipairs(list) do
-            local f
-            pcall(function() f = draw.CreateFont(name, size, weight) end)
-            if not f then pcall(function() f = draw.AddFont(name, size, weight) end) end
-            if f then return f, name end
-        end
-    end
-    local picked
-    FONT,      picked = mk(T.font, T.font_size, 400)
-    FONT_B            = mk(T.font, T.font_size, 600)
-    FONT_LOGO         = mk(T.font_logo, T.font_size + 2, 700) or FONT_B
-    print("[femboytap] font: " .. tostring(picked))
-end
-
-local function fontInitCoro()
-    coroutine.yield()
-
-    pcall(function()
-        ffi.cdef[[
-            unsigned long GetCurrentDirectoryA(unsigned long, char*);
-            unsigned long GetFileAttributesA(const char*);
-            int CreateDirectoryA(const char*, void*);
-            int AddFontResourceExA(const char*, unsigned long, void*);
-            long URLDownloadToFileA(void*, const char*, const char*, unsigned long, void*);
-        ]]
-    end)
-    local gdi32, urlmon
-    pcall(function() gdi32  = ffi.load("gdi32") end)
-    pcall(function() urlmon = ffi.load("urlmon") end)
-
-    local dir = "."
-    pcall(function()
-        local buf = ffi.new("char[600]")
-        local n = ffi.C.GetCurrentDirectoryA(600, buf)
-        if n and n > 0 then dir = ffi.string(buf, n) end
-    end)
-    dir = dir .. "\\femboytap_lua"
-    pcall(function() ffi.C.CreateDirectoryA(dir, nil) end)
-    M._dir = dir
-    coroutine.yield()
-
-    if gdi32 then
-        for _, f in ipairs(FONT_URLS) do
-            local path = dir .. "\\" .. f.file
-            local exists = false
-            pcall(function() exists = ffi.C.GetFileAttributesA(path) ~= 0xFFFFFFFF end)
-            if not exists and urlmon then
-                pcall(function() urlmon.URLDownloadToFileA(nil, f.url, path, 0, nil) end)
+    { file = "femboytap_Oxanium.ttf",      urlmon.URLDownloadToFileA(nil, f.url, path, 0, nil) end)
             end
-            pcall(function() gdi32.AddFontResourceExA(path, 0x10, nil) end)
-            coroutine.yield()
         end
     else
         print("[femboytap] ffi/gdi32 unavailable, using system fonts")
@@ -1002,7 +945,7 @@ M._hitlog = {
     max       = 6,
     colors    = {
         miss = { 235, 90, 90 },
-        hit  = { 139, 124, 246 },
+        hit  = { 144, 238, 144 },
         hurt = { 245, 170, 70 },
         kill = { 80, 200, 120 },
     },
@@ -1063,7 +1006,7 @@ function M:GetNotifPos() return self._notifPos end
 
 local HITLOG_TEXT = { miss = "missed", hit = "hit", hurt = "hurt", kill = "killed enemy" }
 
-local function hitlogLabel(e)
+function hitlogLabel(e)
     if e.text and e.text ~= "" then return e.text end
     local base = HITLOG_TEXT[e.kind] or e.kind
     if e.dmg then return base .. "  " .. tostring(e.dmg) end
@@ -1183,8 +1126,7 @@ local function hitlogEdit(hl, sw, sh, cx, cy, rowH, gap, reveal, row)
     local mx, my = ms.x, ms.y
 
     if ms.pressed then
-        if grab and mx >= grab.x and mx <= grab.x + grab.w
-               and my >= grab.y and my <= grab.y + grab.h then
+        if grab and mx >= grab.x && mx <= grab.x + grab.w && my >= grab.y && my <= grab.y + grab.h then
             dragging = true; ms.consumed = true
         end
         snapX = mabs(x - cx) < 0.5
@@ -1314,7 +1256,6 @@ function M:_drawHitlog()
         if self._open ~= false then
             hitlogEdit(hl, sw, sh, cx, cy, rowH, gap, reveal, row)
         else
-
             local x, y = hitlogPos(hl, sw, sh)
             local n = #HITLOG_DEMO
             local cyTop = y
@@ -1800,7 +1741,7 @@ function M:Build(opts)
 
         local t  = now()
         local dt = 1
-        if _clock then dt = self._last and clamp(t - self._last, 0, 0.1) or 0 end
+        if _clock then dt = self._last and clamp(t - self._last, 0, 0.1) end
         self._last = t
         DT = dt
 
