@@ -1,6 +1,6 @@
-local USER    = "MudillaScripts"
-local REPO    = "aw_cs2v6_femboytap"
-local VERSION = "latest"
+local USER    = "zeracsgo"
+local REPO    = "aw_cs2v6_femboytap-main"
+local VERSION = "main"
 
 local function ref()
     if VERSION == nil or VERSION == "" or VERSION == "latest" then return "main" end
