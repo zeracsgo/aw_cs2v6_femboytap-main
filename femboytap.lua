@@ -37,41 +37,6 @@ end
 local function load(url, cacheFile, name)
     local src, where = fetch(url, cacheFile)
     if not src then print("[femboytap] FATAL: cannot load " .. name) return nil end
-    -- If this is the GUI library, modify the source to change theme colors and title
-    if name == "guilib" then
-        -- Change background to dark Dracula-like
-        src = src:gsub("bg%s*=%s*{[%d+,]+}", "bg        = {40,42,54,255}")
-        src = src:gsub("bg2%s*=%s*{[%d+,]+}", "bg2       = {30,30,40,255}")
-        -- Change accent purple to light green
-        src = src:gsub("accent%s*=%s*{%d+,%d+,%d+}", "accent    = {80,250,120}")
-        -- Change accent_bg purple to dark green
-        src = src:gsub("accent_bg%s*=%s*{[%d+,]+}", "accent_bg = {40,80,60,255}")
-        -- Change widget (button background) to light green
-        src = src:gsub("widget%s*=%s*{[%d+,]+}", "widget    = {80,250,120,255}")
-        -- Change widgethi (button highlight) to lighter green
-        src = src:gsub("widgethi%s*=%s*{[%d+,]+}", "widgethi  = {100,255,150,255}")
-        -- Change section background
-        src = src:gsub("section%s*=%s*{[%d+,]+}", "section   = {50,55,65,255}")
-        -- Change border
-        src = src:gsub("border%s*=%s*{[%d+,]+}", "border    = {60,70,80,255}")
-        -- Change divider
-        src = src:gsub("divider%s*=%s*{[%d+,]+}", "divider   = {50,60,70,255}")
-        -- Change text colors to lighter shades
-        src = src:gsub("text%s*=%s*{[%d+,]+}", "text      = {200,255,200,255}")
-        src = src:gsub("textdim%s*=%s*{[%d+,]+}", "textdim   = {120,180,120,255}")
-        src = src:gsub("texthi%s*=%s*{[%d+,]+}", "texthi    = {220,255,220,255}")
-        -- Change notification colors
-        src = src:gsub("notif_info%s*=%s*{%d+,%d+,%d+}", "notif_info    = {80,250,120}")
-        src = src:gsub("notif_success%s*=%s*{%d+,%d+,%d+}", "notif_success = {80,250,120}")
-        src = src:gsub("notif_error%s*=%s*{%d+,%d+,%d+}", "notif_error   = {250,120,120}")
-        -- Change hitlog colors
-        src = src:gsub("_hitlog%.colors%.miss%s*=%s*{%d+,%d+,%d+}", "_hitlog.colors.miss = {250,120,120}")
-        src = src:gsub("_hitlog%.colors%.hit%s*=%s*{%d+,%d+,%d+}", "_hitlog.colors.hit = {80,250,120}")
-        src = src:gsub("_hitlog%.colors%.hurt%s*=%s*{%d+,%d+,%d+}", "_hitlog.colors.hurt = {250,200,100}")
-        src = src:gsub("_hitlog%.colors%.kill%s*=%s*{%d+,%d+,%d+}", "_hitlog.colors.kill = {80,250,120}")
-        -- Change title
-        src = src:gsub('title%s*=%s*"FEMBOYTAP"', 'title     = "LUNARHUB"')
-    end
     local chunk, err = loadstring(src, "=" .. cacheFile)
     if not chunk then print("[femboytap] " .. name .. " compile error: " .. tostring(err)) return nil end
     local ok, mod = pcall(chunk)
